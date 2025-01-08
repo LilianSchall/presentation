@@ -40,6 +40,7 @@ pub enum Vocabulary {
     RInfAnd, // <&
     RInfSup, // <>
     RPipe, // |
+    Amperstand, // &
     Neg, // !
     Varassignment, // test=3
     Heredoc,
@@ -52,48 +53,50 @@ impl Display for Vocabulary {
 }
 
 
-pub fn generate_mapper() -> HashMap<Vocabulary, String> {
+pub fn generate_mapper() -> HashMap<String, Vocabulary> {
     HashMap::from([
-        (Vocabulary::Word, String::from("")),
-        (Vocabulary::Semicolon, String::from(";")),
-        (Vocabulary::Newline, String::from("\n")),
-        (Vocabulary::And, String::from("&&")),
-        (Vocabulary::Or, String::from("||")),
-        (Vocabulary::OpenBrace, String::from("{")),
-        (Vocabulary::CloseBrace, String::from("}")),
-        (Vocabulary::OpenParenthese, String::from("(")),
-        (Vocabulary::DollarOpenParenthese, String::from("$(")),
-        (Vocabulary::DollarOpenParentheseParenthese, String::from("$((")),
-        (Vocabulary::CloseParenthese, String::from(")")),
-        (Vocabulary::CloseParentheseParenthese, String::from("))")),
-        (Vocabulary::Backquote, String::from("`")),
-        (Vocabulary::For, String::from("for")),
-        (Vocabulary::In, String::from("in")),
-        (Vocabulary::Do, String::from("do")),
-        (Vocabulary::Done, String::from("done")),
-        (Vocabulary::While, String::from("while")),
-        (Vocabulary::Until, String::from("until")),
-        (Vocabulary::Case, String::from("case")),
-        (Vocabulary::Esac, String::from("esac")),
-        (Vocabulary::If, String::from("if")),
-        (Vocabulary::Then, String::from("then")),
-        (Vocabulary::Elif, String::from("elif")),
-        (Vocabulary::Else, String::from("else")),
-        (Vocabulary::Fi, String::from("fi")),
-        (Vocabulary::DoubleSemicolon, String::from(";;")),
-        (Vocabulary::IoNumber, String::from("")),
-        (Vocabulary::InfInf, String::from("<<")),
-        (Vocabulary::InfInfMin, String::from("<<-")),
-        (Vocabulary::RSup, String::from(">")),
-        (Vocabulary::RSupPipe, String::from(">|")),
-        (Vocabulary::RSupSup, String::from(">>")),
-        (Vocabulary::RSupAnd, String::from(">&")),
-        (Vocabulary::RInf, String::from("<")),
-        (Vocabulary::RInfAnd, String::from("<&")),
-        (Vocabulary::RInfSup, String::from("<>")),
-        (Vocabulary::RPipe, String::from("|")),
-        (Vocabulary::Neg, String::from("!")),
-        (Vocabulary::Varassignment, String::from("")),
-        (Vocabulary::Heredoc, String::from("")),
+        (String::from(""),Vocabulary::Word),
+        (String::from(";"),Vocabulary::Semicolon),
+        (String::from("\n"),Vocabulary::Newline),
+        (String::from("&&"),Vocabulary::And),
+        (String::from("||"),Vocabulary::Or),
+        (String::from("{"),Vocabulary::OpenBrace),
+        (String::from("}"),Vocabulary::CloseBrace),
+        (String::from("("),Vocabulary::OpenParenthese),
+        (String::from(")"),Vocabulary::CloseParenthese),
+        (String::from("`"),Vocabulary::Backquote),
+        (String::from("for"),Vocabulary::For),
+        (String::from("in"),Vocabulary::In),
+        (String::from("do"),Vocabulary::Do),
+        (String::from("done"),Vocabulary::Done),
+        (String::from("while"),Vocabulary::While),
+        (String::from("until"),Vocabulary::Until),
+        (String::from("case"),Vocabulary::Case),
+        (String::from("esac"),Vocabulary::Esac),
+        (String::from("if"),Vocabulary::If),
+        (String::from("then"),Vocabulary::Then),
+        (String::from("elif"),Vocabulary::Elif),
+        (String::from("else"),Vocabulary::Else),
+        (String::from("fi"),Vocabulary::Fi),
+        (String::from(";;"),Vocabulary::DoubleSemicolon),
+        (String::from(""),Vocabulary::IoNumber),
+        (String::from("<<"),Vocabulary::InfInf),
+        (String::from("<<-"),Vocabulary::InfInfMin),
+        (String::from(">"),Vocabulary::RSup),
+        (String::from(">|"),Vocabulary::RSupPipe),
+        (String::from(">>"),Vocabulary::RSupSup),
+        (String::from(">&"),Vocabulary::RSupAnd),
+        (String::from("<"),Vocabulary::RInf),
+        (String::from("<&"),Vocabulary::RInfAnd),
+        (String::from("<>"),Vocabulary::RInfSup),
+        (String::from("|"),Vocabulary::RPipe),
+        (String::from("&"),Vocabulary::Amperstand),
+        (String::from("!"),Vocabulary::Neg),
+        (String::from(""),Vocabulary::Varassignment),
+        (String::from(""),Vocabulary::Heredoc),
     ])
+}
+
+pub fn generate_separators() -> Vec<char> {
+    vec![' ', '\t', '\n', '\r', ';', '(', ')', '{', '}', '`', '$', '|', '&', '<', '>', '!']
 }
