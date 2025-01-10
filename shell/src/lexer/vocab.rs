@@ -55,7 +55,6 @@ impl Display for Vocabulary {
 
 pub fn generate_mapper() -> HashMap<String, Vocabulary> {
     HashMap::from([
-        (String::from(""),Vocabulary::Word),
         (String::from(";"),Vocabulary::Semicolon),
         (String::from("\n"),Vocabulary::Newline),
         (String::from("&&"),Vocabulary::And),
@@ -79,7 +78,6 @@ pub fn generate_mapper() -> HashMap<String, Vocabulary> {
         (String::from("else"),Vocabulary::Else),
         (String::from("fi"),Vocabulary::Fi),
         (String::from(";;"),Vocabulary::DoubleSemicolon),
-        (String::from(""),Vocabulary::IoNumber),
         (String::from("<<"),Vocabulary::InfInf),
         (String::from("<<-"),Vocabulary::InfInfMin),
         (String::from(">"),Vocabulary::RSup),
@@ -92,11 +90,9 @@ pub fn generate_mapper() -> HashMap<String, Vocabulary> {
         (String::from("|"),Vocabulary::RPipe),
         (String::from("&"),Vocabulary::Amperstand),
         (String::from("!"),Vocabulary::Neg),
-        (String::from(""),Vocabulary::Varassignment),
-        (String::from(""),Vocabulary::Heredoc),
     ])
 }
 
 pub fn generate_separators() -> Vec<char> {
-    vec![' ', '\t', '\n', '\r', ';', '(', ')', '{', '}', '`', '$', '|', '&', '<', '>', '!']
+    vec![' ', '\t', '\n', '\r', ';', '(', ')', '{', '}', '`', '|', '&', '<', '>', '!']
 }

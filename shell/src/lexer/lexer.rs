@@ -2,7 +2,6 @@ use super::token::Token;
 use super::vocab::{generate_mapper, generate_separators, Vocabulary};
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::ops::Deref;
 use std::rc::Rc;
 
 pub struct Lexer {
@@ -11,6 +10,7 @@ pub struct Lexer {
     pub position: usize,
     pub len: usize,
     pub input: Vec<char>,
+    pub token_quoted: bool
 }
 
 impl Iterator for Lexer {
@@ -60,10 +60,18 @@ impl Iterator for Lexer {
 
         let result: String = current.borrow().clone();
 
-        match self.mapper.get(&result) {
+        let token = match self.mapper.get(&result) {
             None => Some(Token::new(result, Vocabulary::Word)),
-            Some(v) => return Some(Token::new(result, *v)),
-        }
+            Some(v) => return Some(
+                Token::new(
+                    result, 
+                    if self.token_quoted { Vocabulary::Word } else { *v }
+                    )
+                ),
+        };
+
+        self.token_quoted = false;
+        token
     }
 }
 
@@ -79,6 +87,7 @@ impl Lexer {
             position: 0,
             len: vec.len() - 1,
             input: vec,
+            token_quoted: false
         }
     }
 
@@ -93,9 +102,7 @@ impl Lexer {
 
         let c = self.input[self.position];
         match c {
-            'n' => current.borrow_mut().push('\n'),
-            't' => current.borrow_mut().push('\t'),
-            'r' => current.borrow_mut().push('\r'),
+            '\n' => (),
             _ => current.borrow_mut().push(c),
         }
         self.position += 1;
@@ -103,6 +110,7 @@ impl Lexer {
 
     fn get_quoted_string(&mut self, current: Rc<RefCell<String>>) {
         println!("get_quoted_string");
+        self.token_quoted = true;
         while self.position < self.len {
             let c = self.input[self.position];
             self.position += 1;
@@ -116,6 +124,7 @@ impl Lexer {
     }
 
     fn get_double_quoted_string(&mut self, current: Rc<RefCell<String>>) {
+        self.token_quoted = true;
         while self.position < self.len {
             let c = self.input[self.position];
             self.position += 1;
@@ -123,7 +132,12 @@ impl Lexer {
             if c == '"' {
                 break;
             }
-            current.borrow_mut().push(c);
+            if c == '\\' {
+                self.get_escaped_char(Rc::clone(&current));
+            }
+            else {
+                current.borrow_mut().push(c);
+            }
         }
     }
 
@@ -135,15 +149,13 @@ impl Lexer {
 
     fn craft_operator(&mut self, current: Rc<RefCell<String>>, c: char) -> Option<Vocabulary> {
         let mut borrowed = current.borrow_mut();
-        let borrow: String = borrowed.clone();
-        let mut result: String = borrowed.clone();
-        result.push(c);
-
-        let option = match self.mapper.get(&result) {
+        borrowed.push(c);
+        let option = match self.mapper.get(borrowed.as_str()) {
             None => {
                 self.position -= 1;
-                match self.mapper.get(&borrow) {
-                    None => panic!("Unknown token: {}", borrow),
+                borrowed.pop();
+                match self.mapper.get(borrowed.as_str()) {
+                    None => panic!("Unknown token: {}", borrowed),
                     Some(v) => Some(*v),
                 }
             }
@@ -151,7 +163,6 @@ impl Lexer {
         };
 
         if option.is_none() {
-            borrowed.push(c);
             return None;
         }
         option
